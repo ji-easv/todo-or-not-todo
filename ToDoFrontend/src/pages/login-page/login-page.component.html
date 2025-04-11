@@ -1,1 +1,59 @@
-<p>login-page works!</p>
+<section class="flex flex-col items-center justify-center h-full">
+  <h3 class="mb-4 text-2xl">Log In</h3>
+
+  @if (errorMessage) {
+    <p>{{ errorMessage }}</p>
+  }
+
+  <form [formGroup]="loginForm" class="flex flex-col gap-3" (ngSubmit)="onSubmit()">
+    <input
+      type="email"
+      formControlName="email"
+      placeholder="E-mail address"
+      class="p-2 rounded-md"
+    >
+
+    @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+      <div class="text-red-500 text-sm">
+        @if (loginForm.get('email')?.errors?.['required']) {
+          <span>Email is required</span>
+        }
+
+        @if (loginForm.get('email')?.errors?.['email']) {
+          <span>Invalid email format.</span>
+        }
+
+      </div>
+    }
+
+    <input
+      type="password"
+      formControlName="password"
+      class="p-2 rounded-md"
+      placeholder="Password">
+
+    @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+      <div class="text-red-500 text-sm">
+        <span>Password is required.</span>
+      </div>
+    }
+
+    <button class="p-2 rounded-md bg-green-200 disabled:opacity-25" [disabled]="loginForm.invalid">
+      {{ isRegistering ? 'Sign up' : 'Log in' }}
+    </button>
+
+    @if (!isRegistering) {
+      <div>
+        <span>Log in to your account or&nbsp;</span>
+        <button class="underline" (click)="toggleRegistering()">register</button>
+        <span>&nbsp;if you are new here</span>
+      </div>
+    } @else {
+      <div>
+        <span>Sign up or&nbsp;</span>
+        <button class="underline" (click)="toggleRegistering()">log in</button>
+        <span>&nbsp;if you already have an account</span>
+      </div>
+    }
+  </form>
+</section>

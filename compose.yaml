@@ -13,8 +13,8 @@
       dockerfile: TaskMicroservice/Dockerfile
 
 
-  usermicroservice:
-    image: usermicroservice
+  user-ms:
+    image: user-ms
     build:
       context: .
       dockerfile: UserMicroservice/Dockerfile

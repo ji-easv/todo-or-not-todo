@@ -3,11 +3,11 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using UserMicroservice.Application.Interfaces;
+using UserMicroservice.Application.Services.Interfaces;
 using UserMicroservice.Core.Configuration;
 using UserMicroservice.Domain.Entities;
 
-namespace UserMicroservice.Application;
+namespace UserMicroservice.Application.Services;
 
 public class JwtService : IJwtService
 {

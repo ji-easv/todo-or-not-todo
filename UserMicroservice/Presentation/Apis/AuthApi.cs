@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Responses;
-using UserMicroservice.Application.Interfaces;
+using UserMicroservice.Application.Services.Interfaces;
 using UserMicroservice.Domain.Entities;
 
 namespace UserMicroservice.Presentation.Apis;
@@ -26,51 +26,12 @@ public static class AuthApi
     }
 
     public static async Task<Results<Ok<AuthResponse>, ProblemHttpResult>> Login(
-        UserManager<ApplicationUser> userManager,
-        IJwtService jwtService,
+        IUserService userService,
         [FromBody] LoginRequest request)
     {
-        if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
-        {
-            return TypedResults.Problem(new ProblemDetails()
-            {
-                Detail = "Wrong username or password",
-                Status = StatusCodes.Status400BadRequest,
-                Title = "WrongUserNameOrPassword"
-            });
-        }
+        var authResponse = await userService.Authenticate(request);
 
-        var user = await userManager.FindByEmailAsync(request.Email);
-        if (user == null)
-        {
-            return TypedResults.Problem(new ProblemDetails()
-            {
-                Detail = "Wrong username or password",
-                Status = StatusCodes.Status400BadRequest,
-                Title = "WrongUserNameOrPassword"
-            });
-        }
-
-        var result = await userManager.CheckPasswordAsync(user, request.Password);
-        if (!result)
-        {
-            return TypedResults.Problem(new ProblemDetails()
-            {
-                Detail = "Wrong username or password",
-                Status = StatusCodes.Status400BadRequest,
-                Title = "WrongUserNameOrPassword"
-            });
-        }
-
-        var roles = await userManager.GetRolesAsync(user);
-        var token = jwtService.GenerateJwtToken(user, roles, null);
-
-        return TypedResults.Ok(new AuthResponse()
-        {
-            Email = user.Email!,
-            UserId = user.Id,
-            Token = token
-        });
+        return TypedResults.Ok(authResponse);
     }
 
     public static async Task<Results<Ok, ProblemHttpResult>> Register(

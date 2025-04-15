@@ -1,7 +1,6 @@
-using System.Security.Claims;
 using UserMicroservice.Domain.Entities;
 
-namespace UserMicroservice.Application.Interfaces;
+namespace UserMicroservice.Application.Services.Interfaces;
 
 public interface IJwtService
 {

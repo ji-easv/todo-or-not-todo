@@ -22,7 +22,7 @@
       - Jwt__Issuer=https://to-do-or-not.todo
       - Jwt__Audience=to-do-or-not.todo
       - Jwt__ExpirationMinutes=1440
-      - AllowedOrigins=http://localhost:3000
+      - AllowedOrigins=http://localhost:3000,${SERVER_HOST}:3000
     depends_on:
       - unleash
       - postgres-task
@@ -58,13 +58,13 @@
     environment:
       - ConnectionStrings__DefaultConnection=Host=postgres-user;Database=ToDoOrNotToDo;Username=ToDoOrNotToDo;Password=password
       - Unleash__ApiUrl=http://unleash:4242/api/
-      - Unleash__ApiToken=default:development.3ffca58933e8662ec78c716e93a26d796f491cbf95175a7f2cd6d0f2
+      - Unleash__ApiToken=${UNLEASH_API_TOKEN:-*:production.token}
       - ASPNETCORE_ENVIRONMENT=development
       - Jwt__Key=e4c88641c473e0848a49431c9dafb5462efb3372dadd0403b3b60b8149cc9384
       - Jwt__Issuer=https://to-do-or-not.todo
       - Jwt__Audience=to-do-or-not.todo
       - Jwt__ExpirationMinutes=1440
-      - AllowedOrigins=http://localhost:3000
+      - AllowedOrigins=http://localhost:3000,${SERVER_HOST}:3000
     ports:
       - "1001:8080"
     networks:

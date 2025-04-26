@@ -21,6 +21,9 @@ jobs:
           
       - name: Deploy to server
         run: |
+          # Extract tag name that triggered the workflow
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
             # Check if todo-or-not-todo directory exists, if not clone it
             if [ ! -d ~/todo-or-not-todo ]; then
@@ -32,8 +35,25 @@ jobs:
             cd ~/todo-or-not-todo
 
             # Pull latest code
-            git pull
+            git fetch --all --tags
           
+            # Checkout to the specific tag that triggered this workflow
+            git checkout ${TAG_NAME}
+          
+            # Set environment variables for compose.yaml
+            export UNLEASH_API_TOKEN="${{ secrets.UNLEASH_API_TOKEN }}"
+            export SERVER_HOST="${{secrets.SERVER_HOST}}"
+            export ENVIRONMENT="${{ secrets.ENVIRONMENT || 'development' }}"
+          
+            # Create a temporary environment file with correct URLs for production build
+            cat > src/environments/environment.production.ts << EOF
+            export const environment = {
+              production: true,
+              taskMsBaseUrl: 'http://${SERVER_HOST}:1000/api/v1/tasks',
+              userMsBaseUrl: 'http://${SERVER_HOST}:1001',
+            };
+            EOF
+
             # Start all services
             docker compose up -d
 
